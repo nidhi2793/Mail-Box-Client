@@ -28,7 +28,7 @@ export default function SignUp() {
     const enteredPass = data.get("password");
     const enteredConPass = data.get("confirmpassword");
 
-    // const editedEmail = enteredEmail.replace("@", "").replace(".", "");
+    //authenticating with firebase signup Api priject-Mail-box
 
     if (enteredPass !== enteredConPass) {
       alert("Password do not match");
