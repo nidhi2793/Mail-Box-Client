@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { inboxActions } from "../store/inbox-slice";
+import { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -33,16 +33,17 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function Inbox() {
-  //   const inboxMails = useSelector((state) => state.inbox.inboxMails);
-  const [inboxEmails, SetinboxEmails] = React.useState();
+export default function SentBox() {
+  const [sentBoxEmails, SetsentBoxEmails] = React.useState();
   const email = localStorage.getItem("userEmail");
   const editedEmail = email.replace("@", "").replace(".", "");
+
+  //fetching data from firebse
   const [newdata] = useFetchdata(
-    `https://mail-box-65f0e-default-rtdb.firebaseio.com/${editedEmail}/inbox.json`
+    `https://mail-box-65f0e-default-rtdb.firebaseio.com/${editedEmail}/sentBox.json`
   );
 
-  const auth = useSelector((state) => state.auth);
+  //mui pagination settings
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const handleChangePage = (event, newPage) => {
@@ -56,21 +57,14 @@ export default function Inbox() {
 
   useEffect(() => {
     if (newdata) {
-      console.log(newdata);
       const totalMails = Object.keys(newdata).length;
       localStorage.setItem("totalmails", totalMails.toString());
     }
   }, [newdata]);
 
   useEffect(() => {
-    SetinboxEmails(newdata);
+    SetsentBoxEmails(newdata);
   }, [newdata]);
-
-  newdata &&
-    localStorage.setItem(
-      "unseenCount",
-      Object.values(newdata).filter((item) => item.seen === "unseen").length
-    );
 
   return (
     <Container
@@ -82,21 +76,21 @@ export default function Inbox() {
       }}
     >
       <Typography variant="h6" style={{ color: "#1976D2" }}>
-        Inbox
+        Sent
       </Typography>
       <Container sx={{ width: "100%", overflow: "hidden" }}>
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
-                {["Status", "Subject", "Sender", "Date"].map((head) => (
+                {["To", "Subject", "Date"].map((head) => (
                   <StyledTableCell key={head}>{head}</StyledTableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {inboxEmails &&
-                Object.keys(inboxEmails)
+              {sentBoxEmails &&
+                Object.keys(sentBoxEmails)
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .reverse()
                   .map((data, index) => {
@@ -107,16 +101,13 @@ export default function Inbox() {
                         style={{ cursor: "pointer" }}
                       >
                         <StyledTableCell>
-                          {inboxEmails[data].seen}
+                          {sentBoxEmails[data].receiverEmail}
                         </StyledTableCell>
                         <StyledTableCell>
-                          {inboxEmails[data].emailSubject}
+                          {sentBoxEmails[data].emailSubject}
                         </StyledTableCell>
                         <StyledTableCell>
-                          {inboxEmails[data].senderEmail}
-                        </StyledTableCell>
-                        <StyledTableCell>
-                          {inboxEmails[data].date}
+                          {sentBoxEmails[data].date}
                         </StyledTableCell>
                       </StyledTableRow>
                     );
@@ -127,7 +118,7 @@ export default function Inbox() {
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          count={inboxEmails ? Object.keys(inboxEmails).length : 0}
+          count={sentBoxEmails ? Object.keys(sentBoxEmails).length : 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

@@ -15,6 +15,9 @@ const SideBar = () => {
   const showInbox = () => {
     dispatch(uiActions.showInbox());
   };
+  const showsentBox = () => {
+    dispatch(uiActions.showSent());
+  };
 
   return (
     <div className="sideBar">
@@ -36,6 +39,7 @@ const SideBar = () => {
       <Button
         startIcon={<MarkEmailReadIcon />}
         style={{ textTransform: "none" }}
+        onClick={showsentBox}
       >
         Sent
       </Button>

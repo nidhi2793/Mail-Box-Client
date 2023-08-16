@@ -5,10 +5,12 @@ import { useState, Fragment } from "react";
 import { useSelector } from "react-redux";
 import ComposeMail from "./ComposeMail";
 import Inbox from "./inbox";
+import SentBox from "./sentbox";
 
 const Home = () => {
   const showComposeMail = useSelector((state) => state.ui.composeMailVisible);
   const showInbox = useSelector((state) => state.ui.inboxVisible);
+  const showSentbox = useSelector((state) => state.ui.sentboxVisible);
   return (
     <Fragment>
       <Header />
@@ -16,6 +18,7 @@ const Home = () => {
         <SideBar />
         {showComposeMail && <ComposeMail />}
         {showInbox && <Inbox />}
+        {showSentbox && <SentBox />}
       </div>
     </Fragment>
   );
