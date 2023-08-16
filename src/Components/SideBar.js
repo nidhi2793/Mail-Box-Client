@@ -4,14 +4,32 @@ import AddIcon from "@mui/icons-material/Add";
 import "./SideBar.css";
 import InboxIcon from "@mui/icons-material/Inbox";
 import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
+import { uiActions } from "../store/ui-slice";
+import { useDispatch, useSelector } from "react-redux";
 
 const SideBar = () => {
+  const dispatch = useDispatch();
+  const showComposeMail = () => {
+    dispatch(uiActions.showCompose());
+  };
+  const showInbox = () => {
+    dispatch(uiActions.showInbox());
+  };
+
   return (
     <div className="sideBar">
-      <Button startIcon={<AddIcon />} className="compose_btn">
+      <Button
+        startIcon={<AddIcon />}
+        className="compose_btn"
+        onClick={showComposeMail}
+      >
         Compose
       </Button>
-      <Button startIcon={<InboxIcon />} style={{ textTransform: "none" }}>
+      <Button
+        startIcon={<InboxIcon />}
+        style={{ textTransform: "none" }}
+        onClick={showInbox}
+      >
         {" "}
         Inbox
       </Button>

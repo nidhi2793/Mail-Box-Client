@@ -8,22 +8,25 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import "./ComposeMail.css";
+import { EditorState } from "draft-js";
+import { convertToHTML } from "draft-convert";
+import { uiActions } from "../store/ui-slice";
+import { useSelector, useDispatch } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
 
 const ComposeMail = () => {
   const sendEmailTo = useRef();
   const mailSubject = useRef();
-  const [emailBody, setEmailBody] = useState("");
-  const senderEmail = localStorage.getItem("email");
-
-  const updateEmailBody = (event) => {
-    setEmailBody(event.blocks[0].text);
-  };
+  const senderEmail = localStorage.getItem("userEmail");
+  const [editorState, updateEditorState] = useState(EditorState.createEmpty());
+  const dispatch = useDispatch();
 
   const handleComposeEmail = (event) => {
     event.preventDefault();
     const receiverEmail = sendEmailTo.current.value;
     const emailSubject = mailSubject.current.value;
-    const emailDescription = emailBody;
+    const emailDescription = convertToHTML(editorState.getCurrentContent());
 
     if (receiverEmail === "") {
       alert("*Please enter recipient email");
@@ -31,11 +34,14 @@ const ComposeMail = () => {
     }
 
     const seen = "unseen";
+
     const mailData = {
+      id: uuidv4(),
       senderEmail,
       receiverEmail,
       emailSubject,
       emailDescription,
+      date: new Date().toLocaleString(),
       seen,
     };
 
@@ -73,6 +79,11 @@ const ComposeMail = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log("sentMail", data);
+        sendEmailTo.current.value = "";
+        mailSubject.current.value = "";
+        updateEditorState("");
+        dispatch(uiActions.showInbox());
+        // setEmailBody("");
       });
   };
 
@@ -115,15 +126,18 @@ const ComposeMail = () => {
             type="text"
             inputRef={mailSubject}
           />
-          <Box sx={{ height: 300 }}>
+          <Box>
             <Editor
               type="text"
-              value={emailBody}
-              onChange={updateEmailBody}
+              editorState={editorState}
+              onEditorStateChange={updateEditorState}
+              // onChange={updateEmailBody}
+              wrapperClassName="wrapper"
               editorClassName="editor"
+              toolbarClassName="toolbar"
               required
             />
-            <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
+            <Button type="submit" variant="contained" sx={{ mt: 10, mb: 2 }}>
               Send
             </Button>
           </Box>

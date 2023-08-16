@@ -1,26 +1,32 @@
-// import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
-// const isLogIn = localStorage.getItem("localId");
-// let initialAuthState = { isAuthenticate: false };
+const initialState = {
+  tokenId: localStorage.getItem("user"),
+  email: localStorage.getItem("userEmail"),
+  isLoggedIn: localStorage.getItem("isLoggedIn"),
+};
 
-// if (isLogIn === "" || !isLogIn) {
-//   initialAuthState = { isAuthenticate: false };
-// } else {
-//   initialAuthState = { isAuthenticate: true };
-// }
+const authSlice = createSlice({
+  name: "authentication",
+  initialState,
+  reducers: {
+    login(state, action) {
+      state.tokenId = action.payload.tokenId;
+      state.email = action.payload.email;
+      localStorage.setItem("user", action.payload.tokenId);
+      localStorage.setItem("userEmail", action.payload.email);
+      state.isLoggedIn = true;
+      localStorage.setItem("isLoggedIn", true);
+    },
+    logout(state) {
+      localStorage.removeItem("user");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("isLoggedIn");
+      state.isLoggedIn = false;
+      localStorage.clear();
+    },
+  },
+});
 
-// const AuthSlice = createSlice({
-//   name: "authStateChange",
-//   initialState: initialAuthState,
-//   reducers: {
-//     logIn(state) {
-//       state.isAuthenticate = true;
-//     },
-//     logOut(state) {
-//       state.isAuthenticate = false;
-//     },
-//   },
-// });
-
-// export const authActions = AuthSlice.actions;
-// export default AuthSlice;
+export const authActions = authSlice.actions;
+export default authSlice;

@@ -12,14 +12,15 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { Paper } from "@mui/material";
-// import { authActions } from "../store/auth-slice";
-// import { useDispatch } from "react-redux";
+import { inboxFill } from "../store/inbox-slice";
+import { authActions } from "../store/auth-slice";
+import { useDispatch } from "react-redux";
 
 const defaultTheme = createTheme();
 
 export default function LogIn() {
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -49,11 +50,10 @@ export default function LogIn() {
       if (res.ok) {
         const data = await res.json();
         console.log("Logged in Successfully", data);
-        // dispatch(authActions.logIn());
         event.target.reset();
-        localStorage.setItem("localId", data.localId);
-        localStorage.setItem("idToken", data.idToken);
-        localStorage.setItem("email", data.email);
+        dispatch(
+          authActions.login({ tokenId: data.idToken, email: enteredEmail })
+        );
         navigate("/home", { replace: true });
       }
     } catch (error) {
