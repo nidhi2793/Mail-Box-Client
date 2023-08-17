@@ -143,7 +143,7 @@ export default function Inbox() {
         Inbox
       </Typography>
       <Container sx={{ width: "100%", overflow: "hidden" }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
+        <TableContainer>
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
@@ -160,11 +160,11 @@ export default function Inbox() {
                   .map((data, key) => {
                     return (
                       <StyledTableRow
-                        // onClick={() => viewMail(data)}
+                        onClick={() => viewMail(data)}
                         key={key}
                         style={{ cursor: "pointer" }}
                       >
-                        <StyledTableCell onClick={() => viewMail(data)}>
+                        <StyledTableCell>
                           {inboxMails[data].seen === "seen" ? (
                             <MarkEmailReadIcon />
                           ) : (
@@ -181,7 +181,12 @@ export default function Inbox() {
                           {inboxMails[data].date}
                         </StyledTableCell>
                         <StyledTableCell>
-                          <IconButton onClick={() => handleDelete(data)}>
+                          <IconButton
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(data);
+                            }}
+                          >
                             {<DeleteOutlineIcon color="error" />}
                           </IconButton>
                         </StyledTableCell>

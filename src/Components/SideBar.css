@@ -14,3 +14,11 @@
     margin-left: 10px !important;
     /* max-width:150px  ; */
 }
+@media (max-width: 500px) {
+    .sideBar{
+        max-width: 0px;
+       
+    }
+    
+  
+  }

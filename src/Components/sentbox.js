@@ -121,13 +121,11 @@ export default function SentBox() {
                   .map((data, index) => {
                     return (
                       <StyledTableRow
-                        // onClick={() => viewMail(data)}
+                        onClick={() => viewMail(data)}
                         key={index}
                         style={{ cursor: "pointer" }}
                       >
-                        <StyledTableCell onClick={() => viewMail(data)}>
-                          {<MailOutlineIcon />}
-                        </StyledTableCell>
+                        <StyledTableCell>{<MailOutlineIcon />}</StyledTableCell>
                         <StyledTableCell>
                           {sentBoxEmails[data].receiverEmail}
                         </StyledTableCell>
@@ -138,7 +136,12 @@ export default function SentBox() {
                           {sentBoxEmails[data].date}
                         </StyledTableCell>
                         <StyledTableCell>
-                          <IconButton onClick={() => handleDelete(data)}>
+                          <IconButton
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(data);
+                            }}
+                          >
                             {<DeleteOutlineIcon color="error" />}
                           </IconButton>
                         </StyledTableCell>

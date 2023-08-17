@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@mui/material";
+import { Button, Container } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import "./SideBar.css";
 import InboxIcon from "@mui/icons-material/Inbox";
@@ -32,20 +32,7 @@ const SideBar = () => {
         Compose
       </Button>
       <Button
-        startIcon={
-          <InboxIcon />
-          // unseen ? (
-          //   <Badge
-          //     color="primary"
-          //     badgeContent={localStorage.getItem("unseenCount")}
-          //     max={999}
-          //   >
-          //     <InboxIcon />{" "}
-          //   </Badge>
-          // ) : (
-          //   <InboxIcon />
-          // )
-        }
+        startIcon={<InboxIcon />}
         style={{ textTransform: "none" }}
         onClick={showInbox}
       >
