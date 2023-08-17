@@ -38,6 +38,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function Inbox() {
   const inboxMails = useSelector((state) => state.inbox.emails);
+  const navigate = useNavigate();
 
   const [inboxEmails, SetinboxEmails] = React.useState([]);
   const email = localStorage.getItem("userEmail");
@@ -90,11 +91,43 @@ export default function Inbox() {
     )
       .then((res) => res.json())
       .then((data) => {
-        // window.location.reload(true);
+        window.location.reload(true);
       })
       .catch((err) => {
         alert(err.mess);
       });
+  };
+
+  const viewMail = (data) => {
+    // console.log(inboxMails[data]);
+    if (inboxMails[data].seen === "unseen") {
+      const emailData = {
+        id: inboxMails[data].id,
+        senderEmail: inboxMails[data].senderEmail,
+        emailSubject: inboxMails[data].emailSubject,
+        emailDescription: inboxMails[data].emailDescription,
+        date: inboxMails[data].date,
+        seen: "seen",
+      };
+      fetch(
+        `https://mail-box-65f0e-default-rtdb.firebaseio.com/${editedEmail}/inbox/${data}.json`,
+
+        {
+          method: "PUT",
+          body: JSON.stringify(emailData),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {})
+        .catch((error) => {
+          alert(error.message);
+        });
+    }
+    localStorage.setItem("openEmail", JSON.stringify(inboxEmails[data]));
+    navigate(`/viewMail/${data}`);
   };
 
   return (
@@ -114,7 +147,7 @@ export default function Inbox() {
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
-                {["Status", "Subject", "Sender", "Date", ""].map((head) => (
+                {["", "Subject", "Sender", "Date", ""].map((head) => (
                   <StyledTableCell key={head}>{head}</StyledTableCell>
                 ))}
               </TableRow>
@@ -127,13 +160,11 @@ export default function Inbox() {
                   .map((data, key) => {
                     return (
                       <StyledTableRow
-                        // onClick={() => {
-                        //   console.log(data, inboxEmails[data]);
-                        // }}
+                        // onClick={() => viewMail(data)}
                         key={key}
                         style={{ cursor: "pointer" }}
                       >
-                        <StyledTableCell>
+                        <StyledTableCell onClick={() => viewMail(data)}>
                           {inboxMails[data].seen === "seen" ? (
                             <MarkEmailReadIcon />
                           ) : (

@@ -6,6 +6,7 @@ import InboxIcon from "@mui/icons-material/Inbox";
 import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
 import { uiActions } from "../store/ui-slice";
 import { useDispatch, useSelector } from "react-redux";
+import Badge from "@mui/material/Badge";
 
 const SideBar = () => {
   const dispatch = useDispatch();
@@ -19,6 +20,8 @@ const SideBar = () => {
     dispatch(uiActions.showSent());
   };
 
+  const unseen = localStorage.getItem("unseenCount") > 0;
+
   return (
     <div className="sideBar">
       <Button
@@ -29,7 +32,20 @@ const SideBar = () => {
         Compose
       </Button>
       <Button
-        startIcon={<InboxIcon />}
+        startIcon={
+          <InboxIcon />
+          // unseen ? (
+          //   <Badge
+          //     color="primary"
+          //     badgeContent={localStorage.getItem("unseenCount")}
+          //     max={999}
+          //   >
+          //     <InboxIcon />{" "}
+          //   </Badge>
+          // ) : (
+          //   <InboxIcon />
+          // )
+        }
         style={{ textTransform: "none" }}
         onClick={showInbox}
       >

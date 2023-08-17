@@ -15,6 +15,7 @@ import useFetchdata from "../store/Fetchdata";
 import { styled } from "@mui/material/styles";
 import { tableCellClasses } from "@mui/material/TableCell";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -35,6 +36,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function SentBox() {
+  const navigate = useNavigate();
   const [sentBoxEmails, SetsentBoxEmails] = React.useState();
   const email = localStorage.getItem("userEmail");
   const editedEmail = email.replace("@", "").replace(".", "");
@@ -56,12 +58,12 @@ export default function SentBox() {
     setPage(0);
   };
 
-  useEffect(() => {
-    if (newdata) {
-      const totalMails = Object.keys(newdata).length;
-      localStorage.setItem("totalmails", totalMails.toString());
-    }
-  }, [newdata]);
+  // useEffect(() => {
+  //   if (newdata) {
+  //     const totalMails = Object.keys(newdata).length;
+  //     localStorage.setItem("totalmails", totalMails.toString());
+  //   }
+  // }, [newdata]);
 
   useEffect(() => {
     SetsentBoxEmails(newdata);
@@ -84,6 +86,11 @@ export default function SentBox() {
       });
   };
 
+  const viewMail = (data) => {
+    localStorage.setItem("openEmail", JSON.stringify(sentBoxEmails[data]));
+    navigate(`/viewMail/${data}`);
+  };
+
   return (
     <Container
       style={{
@@ -101,7 +108,7 @@ export default function SentBox() {
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
-                {["To", "Subject", "Date"].map((head) => (
+                {["", "To", "Subject", "Date", ""].map((head) => (
                   <StyledTableCell key={head}>{head}</StyledTableCell>
                 ))}
               </TableRow>
@@ -114,10 +121,13 @@ export default function SentBox() {
                   .map((data, index) => {
                     return (
                       <StyledTableRow
-                        onClick={() => {}}
+                        // onClick={() => viewMail(data)}
                         key={index}
                         style={{ cursor: "pointer" }}
                       >
+                        <StyledTableCell onClick={() => viewMail(data)}>
+                          {<MailOutlineIcon />}
+                        </StyledTableCell>
                         <StyledTableCell>
                           {sentBoxEmails[data].receiverEmail}
                         </StyledTableCell>
