@@ -10,10 +10,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { Container, Typography } from "@mui/material";
+import { Container, Typography, IconButton } from "@mui/material";
 import useFetchdata from "../store/Fetchdata";
 import { styled } from "@mui/material/styles";
 import { tableCellClasses } from "@mui/material/TableCell";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -66,6 +67,23 @@ export default function SentBox() {
     SetsentBoxEmails(newdata);
   }, [newdata]);
 
+  const handleDelete = (data) => {
+    fetch(
+      `https://mail-box-65f0e-default-rtdb.firebaseio.com/${editedEmail}/sentBox/${data}.json`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        window.location.reload(true);
+      })
+      .catch((err) => {
+        alert(err.mess);
+      });
+  };
+
   return (
     <Container
       style={{
@@ -108,6 +126,11 @@ export default function SentBox() {
                         </StyledTableCell>
                         <StyledTableCell>
                           {sentBoxEmails[data].date}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          <IconButton onClick={() => handleDelete(data)}>
+                            {<DeleteOutlineIcon color="error" />}
+                          </IconButton>
                         </StyledTableCell>
                       </StyledTableRow>
                     );

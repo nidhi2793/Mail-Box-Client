@@ -23,11 +23,13 @@ export default function Header() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Welcome to your Mail Box
           </Typography>
+          <Typography>{localStorage.getItem("userEmail")}</Typography>
           {isLoggedIn && (
             <Button
               variant="contained"
               color="secondary"
               onClick={handleLogOut}
+              sx={{ marginLeft: 5 }}
             >
               logout
             </Button>

@@ -10,10 +10,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { Container, Typography } from "@mui/material";
+import { Container, IconButton, Typography } from "@mui/material";
 import useFetchdata from "../store/Fetchdata";
 import { styled } from "@mui/material/styles";
 import { tableCellClasses } from "@mui/material/TableCell";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
+import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,14 +37,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function Inbox() {
-  //   const inboxMails = useSelector((state) => state.inbox.inboxMails);
-  const [inboxEmails, SetinboxEmails] = React.useState();
+  const inboxMails = useSelector((state) => state.inbox.emails);
+
+  const [inboxEmails, SetinboxEmails] = React.useState([]);
   const email = localStorage.getItem("userEmail");
   const editedEmail = email.replace("@", "").replace(".", "");
   const [newdata] = useFetchdata(
     `https://mail-box-65f0e-default-rtdb.firebaseio.com/${editedEmail}/inbox.json`
   );
-
+  const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -56,7 +60,7 @@ export default function Inbox() {
 
   useEffect(() => {
     if (newdata) {
-      console.log(newdata);
+      console.log("data", newdata);
       const totalMails = Object.keys(newdata).length;
       localStorage.setItem("totalmails", totalMails.toString());
     }
@@ -64,6 +68,7 @@ export default function Inbox() {
 
   useEffect(() => {
     SetinboxEmails(newdata);
+    dispatch(inboxActions.addEmail(newdata));
   }, [newdata]);
 
   newdata &&
@@ -71,6 +76,26 @@ export default function Inbox() {
       "unseenCount",
       Object.values(newdata).filter((item) => item.seen === "unseen").length
     );
+
+  const handleDelete = (data) => {
+    console.log("reducer", Object.keys(inboxMails));
+
+    console.log("base", Object.keys(inboxEmails));
+    fetch(
+      `https://mail-box-65f0e-default-rtdb.firebaseio.com/${editedEmail}/inbox/${data}.json`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        // window.location.reload(true);
+      })
+      .catch((err) => {
+        alert(err.mess);
+      });
+  };
 
   return (
     <Container
@@ -89,34 +114,45 @@ export default function Inbox() {
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
-                {["Status", "Subject", "Sender", "Date"].map((head) => (
+                {["Status", "Subject", "Sender", "Date", ""].map((head) => (
                   <StyledTableCell key={head}>{head}</StyledTableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {inboxEmails &&
-                Object.keys(inboxEmails)
+              {inboxMails &&
+                Object.keys(inboxMails)
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .reverse()
-                  .map((data, index) => {
+                  .map((data, key) => {
                     return (
                       <StyledTableRow
-                        onClick={() => {}}
-                        key={index}
+                        // onClick={() => {
+                        //   console.log(data, inboxEmails[data]);
+                        // }}
+                        key={key}
                         style={{ cursor: "pointer" }}
                       >
                         <StyledTableCell>
-                          {inboxEmails[data].seen}
+                          {inboxMails[data].seen === "seen" ? (
+                            <MarkEmailReadIcon />
+                          ) : (
+                            <MarkEmailUnreadIcon color="primary" />
+                          )}
                         </StyledTableCell>
                         <StyledTableCell>
-                          {inboxEmails[data].emailSubject}
+                          {inboxMails[data].emailSubject}
                         </StyledTableCell>
                         <StyledTableCell>
-                          {inboxEmails[data].senderEmail}
+                          {inboxMails[data].senderEmail}
                         </StyledTableCell>
                         <StyledTableCell>
-                          {inboxEmails[data].date}
+                          {inboxMails[data].date}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          <IconButton onClick={() => handleDelete(data)}>
+                            {<DeleteOutlineIcon color="error" />}
+                          </IconButton>
                         </StyledTableCell>
                       </StyledTableRow>
                     );
