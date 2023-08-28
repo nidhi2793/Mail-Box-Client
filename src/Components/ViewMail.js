@@ -24,7 +24,6 @@ const ViewMail = () => {
   };
   return (
     <Fragment>
-      <Header />
       <Container
         sx={{
           display: "flex",
