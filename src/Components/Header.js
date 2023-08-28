@@ -7,6 +7,7 @@ import { Button } from "@mui/material";
 import { authActions } from "../store/auth-slice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
 
 export default function Header() {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
@@ -20,6 +21,7 @@ export default function Header() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
+          <MailOutlineIcon style={{ margin: 10 }} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Welcome to your Mail Box
           </Typography>

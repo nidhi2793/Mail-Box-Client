@@ -14,7 +14,6 @@ const Home = () => {
   const showSentbox = useSelector((state) => state.ui.sentboxVisible);
   return (
     <Fragment>
-      <Header />
       <div className="body">
         <SideBar />
         {showInbox && <Inbox />}
